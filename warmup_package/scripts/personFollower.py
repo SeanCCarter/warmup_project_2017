@@ -53,17 +53,25 @@ class personFollower(object):
 		if self.box:
 			centerx = sum([p[0] for p in self.box])/len(self.box)
 			centery = sum([p[1] for p in self.box])/len(self.box)
-			center = (centerx, centery)
+			self.center = (centerx, centery)
 			marker = make_marker(centerx, centery)
 			self.centroid.publish(marker)
 		else:
+			self.center = (1.5, 0)
 			marker = make_no_marker()
 			self.centroid.publish(marker)
-
+			
+	def doMath(self):
+		theta = math.atan2(self.center[1],self.center[0])
+		spin = Twist()
+		spin.angular.z = .9*theta
+		spin.linear.x = .3*(self.center[0] - 1.5) 
+		return spin
 
 	def run(self):
 		while not rospy.is_shutdown():
 			self.findCenterMass()
+			self.commander.publish(self.doMath())
 			self.r.sleep()
 
 if __name__ == '__main__':
