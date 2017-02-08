@@ -59,7 +59,7 @@ class personFollower(object):
 		else:
 			marker = make_no_marker()
 			self.centroid.publish(marker)
-			
+
 
 	def run(self):
 		while not rospy.is_shutdown():
