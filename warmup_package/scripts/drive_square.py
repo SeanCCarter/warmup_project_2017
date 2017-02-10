@@ -62,9 +62,11 @@ class odomNeatoCommander():
 		if end_point > start_point:
 			while self.theta < end_point:
 				self.publisher.publish(spin_command)
+				self.r.sleep()
 		else:
 			while self.theta > (start_point - .02) or self.theta < end_point:
 				self.publisher.publish(spin_command)
+				self.r.sleep()
 		self.publisher.publish(stop_command)
 
 	def squrr(self):
