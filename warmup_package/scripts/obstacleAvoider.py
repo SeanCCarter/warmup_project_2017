@@ -34,17 +34,18 @@ class obstacleAvoider(object):
 			weighted by the distance from the robot to the obstacle"""
 		points = []
 		for i, r in enumerate(self.front_points):
-			theta = (i-45)*math.pi/180
-			points.append((r*math.cos(theta), r*math.sin(theta)))
+			if r != 0.0:
+				theta = (i-90)*math.pi/180
+				points.append((r*math.cos(theta), r*math.sin(theta), r))
 
 		vectorx = 0
 		vectory = 0
 		for i, point in enumerate(points):
 			if point[0] and point[1]: #Don't want to divide by 0
-				vectorx += point[0]/(distance_weight*float(self.front_points[i]))
-				vectory += point[1]/(distance_weight*float(self.front_points[i]))
+				vectorx += point[0]/(distance_weight*point[2]**2)
+				vectory += point[1]/(distance_weight*point[2]**2)
 
-		#Adding up all points ruins proportional control
+		#Adding up al.l points ruins proportional control
 		#A wall might have a huge weght, no matter the distance
 		vectorx = vectorx/len(points)
 		vectory = vectory/len(points)
@@ -62,17 +63,22 @@ class obstacleAvoider(object):
 		my_marker.color.a = 1
 		self.visualizer.publish(my_marker)
 
-	def command_robot(self, base_speed = .3, obstacle_weight = 1, turn_weight = 5):
+	def command_robot(self, base_speed = .3, obstacle_weight = .1, turn_weight = .5):
 		command = Twist()
-		command.linear.x = base_speed - obstacle_weight*self.obstacle_vector[0]
-		command.angular.z = - turn_weight*self.obstacle_vector[1]
+		obstacle = (math.hypot(self.obstacle_vector[0], self.obstacle_vector[1]), #magnitude of vector
+			math.atan2(self.obstacle_vector[1],self.obstacle_vector[0])) #theta of vector
+		# command.linear.x = base_speed - obstacle_weight*obstacle[0] 
+		command.linear.x = base_speed - obstacle_weight*obstacle[0]*self.obstacle_vector[0]
+		# command.angular.z = turn_weight*(3.14/2 - obstacle[1])*obstacle[0]
+		command.angular.z = turn_weight*self.obstacle_vector[1]*-obstacle[0]
+
 		self.commander.publish(command)
 
 	def run(self):
 		while not rospy.is_shutdown():
-			self.doMath(2.5)
+			self.doMath(2)
 			self.visualize_obstacle()
-			self.command_robot(.3, 1.5, 2)
+			self.command_robot(.3, 1.5, 3)
 			self.r.sleep()
 
 if __name__ == '__main__':
