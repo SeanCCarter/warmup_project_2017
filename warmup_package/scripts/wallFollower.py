@@ -8,7 +8,7 @@ import rospy
 class wallFollower(object):
 	"""docstring for wallFollower"""
 	def __init__(self):
-		rospy.init_node("wallFollower")
+		# rospy.init_node("wallFollower")
 		rospy.Subscriber("/scan", LaserScan, self.processLaser)
 		self.r = rospy.Rate(10)
 		self.publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)

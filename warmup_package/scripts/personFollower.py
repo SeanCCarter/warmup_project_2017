@@ -35,7 +35,7 @@ def make_no_marker():
 class personFollower(object):
 	"""docstring for wallFollower"""
 	def __init__(self):
-		rospy.init_node("personFollower")
+		# rospy.init_node("personFollower")
 		rospy.Subscriber("/scan", LaserScan, self.processLaser)
 		self.r = rospy.Rate(10)
 		self.commander = rospy.Publisher("cmd_vel", Twist, queue_size=10)
@@ -48,6 +48,7 @@ class personFollower(object):
 		"takes a bunch of data from the laser scanner and uses it"
 		self.laser_points = [polar_to_cartesian(r, theta) for theta, r in enumerate(L.ranges)]
 		self.box = [p for p in self.laser_points if (p[0]>1 and p[0]<2) and (p[1]>-.5 and p[1]<.5)]
+		return True
 
 	def findCenterMass(self):
 		if self.box:
