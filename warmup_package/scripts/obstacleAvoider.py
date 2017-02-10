@@ -26,7 +26,7 @@ class obstacleAvoider(object):
 		"takes a bunch of data from the laser scanner and uses it"
 		# self.front_point = L.ranges[315]
 		# self.back_point = L.ranges[225]
-		self.front_points = L.ranges[-91:-1] + L.ranges[0:90]
+		self.front_points = L.ranges[-46:-1] + L.ranges[0:45]
 		self.back_points = L.ranges[135:225]
 
 	def doMath(self, distance_weight = 1):
@@ -35,20 +35,22 @@ class obstacleAvoider(object):
 		points = []
 		for i, r in enumerate(self.front_points):
 			if r != 0.0:
-				theta = (i-90)*math.pi/180
+				theta = (i-45)*math.pi/180
 				points.append((r*math.cos(theta), r*math.sin(theta), r))
 
 		vectorx = 0
 		vectory = 0
 		for i, point in enumerate(points):
 			if point[0] and point[1]: #Don't want to divide by 0
-				vectorx += point[0]/(distance_weight*point[2]**2)
-				vectory += point[1]/(distance_weight*point[2]**2)
+				vectorx += point[0]/(distance_weight*point[2]**3)
+				vectory += point[1]/(distance_weight*point[2]**3)
 
 		#Adding up al.l points ruins proportional control
 		#A wall might have a huge weght, no matter the distance
-		vectorx = vectorx/len(points)
-		vectory = vectory/len(points)
+		if vectorx:
+			vectorx = vectorx/len(points)
+		if vectory:
+			vectory = vectory/len(points)
 		self.obstacle_vector = (vectorx, vectory)
 
 	def visualize_obstacle(self):
@@ -58,8 +60,8 @@ class obstacleAvoider(object):
 		vector_point.x = self.obstacle_vector[0]
 		vector_point.y = self.obstacle_vector[1]
 		my_marker.points = [Point(), vector_point]
-		my_marker.scale.x = .5
-		my_marker.scale.y = 1
+		my_marker.scale.x = .1
+		my_marker.scale.y = .2
 		my_marker.color.a = 1
 		self.visualizer.publish(my_marker)
 
@@ -78,7 +80,7 @@ class obstacleAvoider(object):
 		while not rospy.is_shutdown():
 			self.doMath(2)
 			self.visualize_obstacle()
-			self.command_robot(.3, 1.5, 3)
+			self.command_robot(.3, .2, 3)
 			self.r.sleep()
 
 if __name__ == '__main__':
