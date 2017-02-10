@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan
 import math
 from geometry_msgs.msg import Twist, Point
@@ -17,6 +18,8 @@ class wallFollower(object):
 		self.publisher = rospy.Publisher("cmd_vel", Twist, queue_size=10)
 		self.visualizer = rospy.Publisher("Marker", Marker, queue_size=10)
 		self.front_point = None
+		# self.str_pub = rospy.Publisher("std_msgs", Bool, queue_size=10)
+		# state = rospy.Subscriber("/messages", Bool)
 		while self.front_point == None:
 			self.r.sleep()
 		print("starting.")
@@ -57,10 +60,13 @@ class wallFollower(object):
 		forwards.linear.x = .1
 		stop_command = Twist()
 		while not rospy.is_shutdown():
+			# if state == 0:
 			forwards.angular.z = self.doMath(distance)
 			self.vizualize_wall()
 			self.publisher.publish(forwards)
 			self.r.sleep()
+			# elif state == 1:
+				# rospy.spin()
 
 if __name__ == '__main__':
 	node = wallFollower()
