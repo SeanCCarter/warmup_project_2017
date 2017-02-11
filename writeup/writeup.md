@@ -36,17 +36,24 @@ For the wall follower, we aimed for our robot to smoothly and consistently track
 
 For steps we used to build this program, we first started by measuring exactly 2 points at 45 degrees in front of and behind the robot. [do equation] The equation proportionally accounts for a difference between the two measurements. Once we got this working, we realized that sometimes the LIDAR would miss single points, and decided to take an average of points to reduce the chance of error. This was simple, and we just averaged out the distances from all the points.
 
-![](wallfollower_diagram.jpg)
+![diagram for wall following](wallfollower_diagram.jpg)
 
 Our code is structured with a wallFollower class, which has different functions to accomplish the various tasks needed to wall-follow. The seperate functions were organized into the three categories of "sense, think, act." The processLaser function subscribes to the LaserScan topic and sorts the data to remove noise, select the correct points, and average the data. It returns data to the doMath function, which acts as the think part of the robot.
 
-The doMath function simply computes the rotational velocity required to balance out the front and back points, and the rotational velocity required to keep the robot at the correct distance from the wall. The run function takes the two velocities, adds them together, and then publishes a movement command in the form of a twist message to the "cmd_vel" topic.
+The doMath function simply computes the rotational velocity required to balance out the front and back points, and the rotational velocity required to keep the robot at the correct distance from the wall. The run function takes the two velocities, adds them together, and then publishes a movement command in the form of a twist message to the "cmd_vel" topic. This way, whichever behavior (keep the distance, or follow the wall) is furthest from its goal, has a larger effect on the robot's a
 
 ###### Person Following:
 Now that we had a firm understanding of the LaserScan data, we created a behavior to allow the neato to follow a person around the room. We defined a person as the collection of points inside a 1 meter by 1 meter box in front of the robot. To follow the "person", we calculate what the center of all of these points is.
 ![Following a person](personfollower_diagram.jpg)
 Once we have that, we use proportional control to keep the person directly in the center of the box - the further the centroid is from the center of the box in the X direction, the faster the robot moves forwards or backwards. The further it is in the Y direction, the faster the robot rotates. The biggest drawback of this approach is that it only works when there are no obstacles inside of the box - walking too close to a wall results in the neato locking onto it instead of you.
 
+<<<<<<< HEAD
 ###### Obstacle Following:
 The obstacle avoider code uses a similar idea to the person follower code, but instead of using proportional control to bring the robot closer to a destination, proportional control is used to slow down and move the robot as it nears an obstacle. 
 In order to do this, we take the laser data of the front ninety degrees and weigh the points based on distance. If an object is closer, it is more important and if it is further away, it isn't very important at all. Combining all these points together gives us a specific point which is the "center of mass of the obstacles." We would use the same proportional control as above in the person follower but swap the signs so that the robot would get near the object and then avoid it. A problem we encountered was that it is difficult to give the robot a destination while still avoiding obstacles, so we just made the robot avoid obstacles until it found a point where nothing was in its way. We also had a lot of difficulty finding the correct value to weigh the points with, but found it with enough trial and error.
+=======
+###### Obstacle Avoidance:
+Our obstacle avoidance code is, in many ways, the opposite of the person following code.
+
+###### Finite State Control:
+>>>>>>> fe20d4b860b5e683cb94d03ea499d985c6da90de
