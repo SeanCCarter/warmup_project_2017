@@ -48,6 +48,8 @@ Now that we had a firm understanding of the LaserScan data, we created a behavio
 Once we have that, we use proportional control to keep the person directly in the center of the box - the further the centroid is from the center of the box in the X direction, the faster the robot moves forwards or backwards. The further it is in the Y direction, the faster the robot rotates. The biggest drawback of this approach is that it only works when there are no obstacles inside of the box - walking too close to a wall results in the neato locking onto it instead of you.
 
 ###### Obstacle Avoidance:
-Our obstacle avoidance code is, in many ways, the opposite of the person following code.
 
 ###### Finite State Control:
+Our finite state controller had two states, and was structured similarly to the behaviors it was built from. We used bout our wall following code, and our person following code - if anyone stepped into the box defined by the person following code, it would follow them, but it would follow the wall otherwise.
+
+To change between states, each behavior had its own run() function. They took care of detecting their own end conditions - whenever that happened, the running function would end, and return the name of the state that it would transition to. The main run() function was just a while loop, continuously accepting the name of the next function it needed to run, and then running it, until the program was terminated.
