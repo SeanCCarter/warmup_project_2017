@@ -49,7 +49,7 @@ def make_no_marker():
 		sensible way to stop displaying a marker
 
 		Returns:
-			A marker that can't be seen in rviz"""
+			A marker that can't be seen in rviz."""
 	my_marker = Marker(type=Marker.SPHERE)
 	my_marker.header.frame_id = "base_link"
 	my_marker.pose.position.x = 0
