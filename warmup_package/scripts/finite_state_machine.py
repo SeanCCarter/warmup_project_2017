@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-# from std_msgs.msg import String
+# File name: finite_state_machine.py
+# Author: Sean Carter, Paul Krusell
+# Python Version: 2.7
+
 from sensor_msgs.msg import LaserScan
 import math
 from geometry_msgs.msg import Twist, Point
@@ -55,8 +58,6 @@ class FSM(object):
 	def WFprocessLaser(self, L):
 		print ("laser scan 2")
 		"takes a bunch of data from the laser scanner and uses it"
-		# self.front_point = L.ranges[315]
-		# self.back_point = L.ranges[225]
 		front_points = [p for p in L.ranges[310:320] if p != 0.0]
 		back_points = [p for p in L.ranges[220:230] if p != 0.0]
 		self.middle = L.ranges[270]
